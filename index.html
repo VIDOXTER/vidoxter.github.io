@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحميل فيديو MP4 تلقائيًا</title>
+</head>
+<body>
+
+<script>
+    // انتظر حتى يتم تحميل المستند
+    document.addEventListener('DOMContentLoaded', function() {
+        // احصل على جميع ملفات الفيديو MP4 في نفس المجلد
+        fetchVideoFiles();
+    });
+
+    function fetchVideoFiles() {
+        // قم بجلب قائمة بملفات الفيديو
+        fetch('./')
+            .then(response => response.text())
+            .then(html => {
+                var parser = new DOMParser();
+                var doc = parser.parseFromString(html, 'text/html');
+                
+                var videoFiles = Array.from(doc.querySelectorAll('a[href$=".mp4"]')).map(link => link.getAttribute('href'));
+
+                // إنشاء روابط تحميل تلقائيًا
+                createDownloadLinks(videoFiles);
+            })
+            .catch(error => console.error('حدث خطأ أثناء جلب ملفات الفيديو: ', error));
+    }
+
+    function createDownloadLinks(videoFiles) {
+        // إنشاء روابط تحميل لكل ملف فيديو
+        videoFiles.forEach(function(videoFile) {
+            var link = document.createElement('a');
+            link.href = videoFile;
+            link.download = videoFile;
+            link.textContent = 'تحميل ' + videoFile;
+
+            // إضافة الرابط إلى الصفحة
+            document.body.appendChild(link);
+            document.body.appendChild(document.createElement('br')); // إضافة فاصل بين الروابط
+        });
+    }
+</script>
+
+</body>
+</html>
